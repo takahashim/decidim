@@ -5,13 +5,11 @@ module Decidim
     module Admin
       # A form object to be used when admin users want to create a proposal.
       class ProposalBaseForm < Decidim::Form
-        include Decidim::ApplicationHelper
         include Decidim::TranslatableAttributes
+        include Decidim::ApplicationHelper
 
         mimic :proposal
 
-        attribute :title, String
-        attribute :body, String
         attribute :address, String
         attribute :latitude, Float
         attribute :longitude, Float
@@ -25,8 +23,7 @@ module Decidim
         attribute :photos, Array[String]
         attribute :add_photos, Array
 
-        validates :title, :body, presence: true
-        validates :address, geocoding: true, if: -> { current_component.settings.geocoding_enabled? }
+        validates :address, geocoding: true, if: ->(form) { form.has_address? && !form.geocoded? }
         validates :category, presence: true, if: ->(form) { form.category_id.present? }
         validates :scope, presence: true, if: ->(form) { form.scope_id.present? }
         validates :scope_id, scope_belongs_to_component: true, if: ->(form) { form.scope_id.present? }
@@ -67,6 +64,18 @@ module Decidim
         # Returns the scope identifier related to the proposal
         def scope_id
           @scope_id || scope&.id
+        end
+
+        def geocoding_enabled?
+          Decidim::Map.available?(:geocoding) && current_component.settings.geocoding_enabled?
+        end
+
+        def has_address?
+          geocoding_enabled? && address.present?
+        end
+
+        def geocoded?
+          latitude.present? && longitude.present?
         end
 
         # Finds the Meetings of the current participatory space
