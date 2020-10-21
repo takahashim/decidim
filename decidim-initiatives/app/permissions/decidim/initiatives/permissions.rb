@@ -23,12 +23,16 @@ module Decidim
         return permission_action unless user
 
         create_initiative?
+        edit_public_initiative?
+        update_public_initiative?
 
         vote_initiative?
         sign_initiative?
         unvote_initiative?
 
         initiative_attachment?
+
+        initiative_committee_action?
 
         permission_action
       end
@@ -70,6 +74,18 @@ module Decidim
                       permission_action.action == :create
 
         toggle_allow(creation_enabled?)
+      end
+
+      def edit_public_initiative?
+        allow! if permission_action.subject == :initiative &&
+                  permission_action.action == :edit
+      end
+
+      def update_public_initiative?
+        return unless permission_action.subject == :initiative &&
+                      permission_action.action == :update
+
+        toggle_allow(initiative.created?)
       end
 
       def creation_enabled?
@@ -188,6 +204,22 @@ module Decidim
           Decidim::Initiatives.do_not_require_authorization ||
           UserAuthorizations.for(user).any?
         )
+      end
+
+      def initiative_committee_action?
+        return unless permission_action.subject == :initiative_committee_member
+        return unless user.admin? || initiative&.has_authorship?(user)
+
+        request = context.fetch(:request, nil)
+
+        case permission_action.action
+        when :index
+          allow!
+        when :approve
+          toggle_allow(!request&.accepted?)
+        when :revoke
+          toggle_allow(!request&.rejected?)
+        end
       end
     end
   end
