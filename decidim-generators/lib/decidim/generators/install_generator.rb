@@ -83,6 +83,18 @@ module Decidim
         end
       end
 
+      def configure_log_level_in_ci
+        inject_into_file "config/environments/test.rb",
+                         before: /^end$/ do
+          cut <<~RUBY, strip: false
+            |
+            |  if ENV['CI']
+            |    config.log_level = :fatal
+            |  end
+          RUBY
+        end
+      end
+
       def configure_js_compressor
         gsub_file "config/environments/production.rb", "config.assets.js_compressor = :uglifier", "config.assets.js_compressor = Uglifier.new(:harmony => true)"
       end
