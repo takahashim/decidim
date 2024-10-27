@@ -33,6 +33,11 @@ Decidim.register_component(:sortitions) do |component|
     Decidim::Sortitions::FilteredSortitions.for(components, start_at, end_at).count
   end
 
+  component.register_stat :comments_count, tag: :comments do |components, start_at, end_at|
+    sortitions = Decidim::Sortitions::FilteredSortitions.for(components, start_at, end_at)
+    sortitions.sum(:comments_count)
+  end
+
   component.seeds do |participatory_space|
     require "decidim/sortitions/seeds"
 

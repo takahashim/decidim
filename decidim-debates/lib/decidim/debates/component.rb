@@ -46,6 +46,11 @@ Decidim.register_component(:debates) do |component|
     Decidim::Endorsement.where(resource_id: debates_ids, resource_type: Decidim::Debates::Debate.name).count
   end
 
+  component.register_stat :comments_count, tag: :comments do |components, start_at, end_at|
+    debates = Decidim::Debates::FilteredDebates.for(components, start_at, end_at)
+    debates.sum(:comments_count)
+  end
+
   component.register_resource(:debate) do |resource|
     resource.model_class_name = "Decidim::Debates::Debate"
     resource.card = "decidim/debates/debate"

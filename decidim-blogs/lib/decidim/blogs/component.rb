@@ -17,6 +17,11 @@ Decidim.register_component(:blogs) do |component|
     Decidim::Blogs::Post.where(component: components).count
   end
 
+  component.register_stat :comments_count, tag: :comments do |components, start_at, end_at|
+    posts = Decidim::Blogs::FilteredPosts.for(components, start_at, end_at)
+    posts.sum(:comments_count)
+  end
+
   component.actions = %w(create update destroy)
 
   component.settings(:global) do |settings|

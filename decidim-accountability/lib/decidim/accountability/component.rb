@@ -37,6 +37,11 @@ Decidim.register_component(:accountability) do |component|
     Decidim::Accountability::Result.where(component: components).count
   end
 
+  component.register_stat :comments_count, tag: :comments do |components, start_at, end_at|
+    results = Decidim::Accountability::FilteredResults.for(components, start_at, end_at)
+    results.sum(:comments_count)
+  end
+
   component.settings(:step) do |settings|
     settings.attribute :comments_blocked, type: :boolean, default: false
   end
