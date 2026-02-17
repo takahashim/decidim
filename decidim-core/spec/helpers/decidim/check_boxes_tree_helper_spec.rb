@@ -100,6 +100,60 @@ module Decidim
       end
     end
 
+    describe "::TreeNode#single_option?" do
+      context "when tree has a single option" do
+        let(:tree) { helper.filter_tree_from_array([["", "All"], ["only_option", "Only option"]]) }
+
+        it "returns true" do
+          expect(tree.single_option?).to be true
+        end
+      end
+
+      context "when tree has multiple items" do
+        let(:root_taxonomy) { create(:taxonomy, organization:) }
+        let(:taxonomy_filter) { create(:taxonomy_filter, :with_items, items_count: 2, root_taxonomy:) }
+        let(:tree) { helper.filter_taxonomy_values_for(taxonomy_filter) }
+
+        it "returns false" do
+          expect(tree.single_option?).to be false
+        end
+      end
+
+      context "when taxonomy filter has a single item (nested TreeNode child)" do
+        let(:root_taxonomy) { create(:taxonomy, organization:) }
+        let(:taxonomy_filter) { create(:taxonomy_filter, :with_items, items_count: 1, root_taxonomy:) }
+        let(:tree) { helper.filter_taxonomy_values_for(taxonomy_filter) }
+
+        it "returns false" do
+          expect(tree.single_option?).to be false
+        end
+      end
+
+      context "when node is nil" do
+        let(:tree) do
+          Decidim::CheckBoxesTreeHelper::TreeNode.new(
+            Decidim::CheckBoxesTreeHelper::TreePoint.new("", "All")
+          )
+        end
+
+        it "returns false" do
+          expect(tree.single_option?).to be false
+        end
+      end
+
+      context "when node is an empty array" do
+        let(:tree) do
+          Decidim::CheckBoxesTreeHelper::TreeNode.new(
+            Decidim::CheckBoxesTreeHelper::TreePoint.new("", "All"), []
+          )
+        end
+
+        it "returns false" do
+          expect(tree.single_option?).to be false
+        end
+      end
+    end
+
     describe "#filter_global_scopes_values" do
       let(:root) { helper.filter_global_scopes_values }
       let(:leaf) { helper.filter_global_scopes_values.leaf }
