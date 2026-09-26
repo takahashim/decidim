@@ -5,7 +5,7 @@
 
     <div class="meeting-list__modal-input">
       <div id="dialog-desc-conference-registration-confirm-<%= model.id %>" class="text-gray-2 text-xl mt-9 prose">
-        <%= decidim_sanitize_editor translated_attribute(conference.registration_terms) %>
+        <%= decidim_sanitize_editor_admin translated_attribute(conference.registration_terms) %>
       </div>
 
       <div class="flex justify-between mt-16">

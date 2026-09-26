@@ -60,6 +60,23 @@ describe "Initiative" do
         end
       end
 
+      context "when the initiative has been answered with images" do
+        let(:base_initiative) do
+          create(
+            :initiative,
+            organization:,
+            answered_at: Time.current,
+            answer: {
+              en: '<p>An answer</p><img src="/uploads/decidim/initiative_answer.jpg" alt="Initiative answer image">'
+            }
+          )
+        end
+
+        it "shows the images entered by the administrators in the answer" do
+          expect(page).to have_css("img[alt='Initiative answer image']")
+        end
+      end
+
       context "when signature interval is defined" do
         let(:base_initiative) do
           create(:initiative,

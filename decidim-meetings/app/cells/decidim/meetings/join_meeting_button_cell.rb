@@ -59,7 +59,8 @@ module Decidim
       end
 
       def registration_terms_text
-        decidim_sanitize_editor translated_attribute(model.registration_terms)
+        terms = translated_attribute(model.registration_terms)
+        model.official? ? decidim_sanitize_editor_admin(terms) : decidim_sanitize_editor(terms)
       end
 
       def registration_form

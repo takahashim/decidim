@@ -4,10 +4,10 @@
   <p>
     <% if initiative.answer_url.present? %>
       <%= link_to initiative.answer_url, target: "_blank", rel: "noopener noreferrer" do %>
-        <%= decidim_sanitize_editor translated_attribute initiative.answer %>
+        <%= decidim_sanitize_editor_admin translated_attribute initiative.answer %>
       <% end %>
     <% else %>
-      <%= decidim_sanitize_editor translated_attribute initiative.answer %>
+      <%= decidim_sanitize_editor_admin translated_attribute initiative.answer %>
     <% end %>
   </p>
   <% end %>

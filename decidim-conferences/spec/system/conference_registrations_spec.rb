@@ -126,6 +126,26 @@ describe "Conference registrations" do
         expect(page).to have_css(".button", text: "Attending")
         expect(page).to have_css("button[disabled]", text: "Registration", count: 4)
       end
+
+      context "and the registration terms contain images" do
+        let(:registration_terms) do
+          {
+            en: '<p>A legal text</p><img src="/uploads/decidim/registration_terms.jpg" alt="Registration terms image">'
+          }
+        end
+
+        it "shows the images entered by the administrators in the registration terms" do
+          visit_conference_registration_types
+
+          within "#registration-type-#{registration_type.id}" do
+            click_on "Registration"
+          end
+
+          within "#conference-registration-confirm-#{registration_type.id}" do
+            expect(page).to have_css("img[alt='Registration terms image']")
+          end
+        end
+      end
     end
 
     context "and there are published registrations types" do

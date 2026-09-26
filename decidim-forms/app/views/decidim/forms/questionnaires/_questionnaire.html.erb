@@ -56,7 +56,7 @@
           <div class="response-questionnaire__tos">
             <%= form.check_box :tos_agreement, label: t("decidim.forms.questionnaires.show.tos_agreement"), id: "questionnaire_tos_agreement", disabled: !current_participatory_space.can_participate?(current_user) %>
             <div>
-              <%= decidim_sanitize_editor translated_attribute questionnaire.tos %>
+              <%= decidim_sanitize_editor_admin translated_attribute questionnaire.tos %>
             </div>
           </div>
         <% end %>

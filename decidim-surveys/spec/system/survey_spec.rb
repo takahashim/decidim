@@ -233,6 +233,23 @@ describe "Respond a survey" do
       context "when displaying question description" do
         it_behaves_like "has embedded video in description", :question_description
       end
+
+      context "when the tos contains images" do
+        let(:tos) do
+          {
+            en: '<p>Terms of service</p><img src="/uploads/decidim/tos.jpg" alt="Terms of service image">'
+          }
+        end
+
+        before do
+          questionnaire.update!(tos:)
+          visit current_path
+        end
+
+        it "shows the images entered by the administrators in the tos" do
+          expect(page).to have_css("img[alt='Terms of service image']")
+        end
+      end
     end
 
     context "when the survey allows to edit responses, and question has display conditions" do
